@@ -13,8 +13,18 @@ export const radioPlayerInit = () => {
 
     radioNavigation.addEventListener('change', event => {
         const target = event.target;
+        radioStop.disabled = false;
+        
         audio.src = target.dataset.radioStantion;
 
         audio.play();
+    });
+
+    radioStop.addEventListener('click', () =>{
+        if (audio.paused){
+            audio.play();
+        }else{
+            audio.pause();
+        }
     });
 };
