@@ -1,3 +1,5 @@
+import { addZero } from './supScript.js';
+
 export const musicPlayerInit = () => {
 
    const audio = document.querySelector('.audio');
@@ -32,6 +34,23 @@ export const musicPlayerInit = () => {
        }
    };
 
+   const prevTrack = () => {
+       if (trackIndex !== 0) {
+           trackIndex--;
+       } else{
+           trackIndex = playlist.length - 1;
+       }
+       loadTrack();
+    }
+   const nextTrack = () => {
+       if (trackIndex === playlist.length - 1){
+           trackIndex = 0;
+       } else{
+           trackIndex++;
+       }
+       loadTrack();
+     }
+
    audioNavigation.addEventListener('click', event => {
        const target = event.target;
 
@@ -50,21 +69,43 @@ export const musicPlayerInit = () => {
        }
 
        if (target.classList.contains('audio-button__prev')) {
-            if (trackIndex !== 0) {
-                trackIndex--;
-            } else{
-                trackIndex = playlist.length - 1;
-            }
-            loadTrack();
+            prevTrack();
        }
 
        if (target.classList.contains('audio-button__next')) {
-            if (trackIndex === playlist.length - 1){
-                trackIndex = 0;
-            } else{
-                trackIndex++;
-            }
-            loadTrack();
+           nextTrack();
        }
    });
-};
+
+   audioPlayer.addEventListener('ended', () => {
+        nextTrack();
+        audioPlayer.play();
+   });
+
+  //Прогресс бар, показывает время
+   audioPlayer.addEventListener('timeupdate', () => {
+       const duration = audioPlayer.duration;
+       const currentTime = audioPlayer.currentTime;
+       const progress = (currentTime / duration) * 100;
+
+       audioProgressTiming.style.width = progress + '%';
+
+       const minutesPassed = Math.floor(currentTime / 60) || '0';
+       const secondsPassed = Math.floor(currentTime % 60) || '0';
+
+       const minutesTotal = Math.floor(duration / 60) || '0';
+       const secondsTotal = Math.floor(duration % 60) || '0';
+
+       audioTimePassed.textContent = `${addZero(minutesPassed)}:${addZero(secondsPassed)}`;
+       audioTimeTotal.textContent = `${addZero(minutesTotal)}:${addZero(secondsTotal)}`;
+   });
+
+  //Прогресс бар работает при клике на него
+  audioProgress.addEventListener('click', event => {
+      const x = event.offsetX;
+      const allWidth = audioProgress.clientWidth;
+      const progress = (x / allWidth) * audioPlayer.duration;
+      audioPlayer.currentTime = progress;
+  }); 
+
+}; 
