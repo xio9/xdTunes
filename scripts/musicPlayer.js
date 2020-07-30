@@ -18,8 +18,23 @@ export const musicPlayerInit = () => {
 
    let trackIndex = 0;
 
+   const loadTrack = () => {
+       const isPlayed = audioPlayer.paused;
+       const track = playlist[trackIndex];
+       audioImg.src = `./audio/${track}.jpg`;
+       audioHeader.textContent = track.toUpperCase();
+       audioPlayer.src = `./audio/${track}.mp3`;
+
+       if (isPlayed) {
+           audioPlayer.pause();
+       } else {
+           audioPlayer.play();
+       }
+   };
+
    audioNavigation.addEventListener('click', event => {
        const target = event.target;
+
        if (target.classList.contains('audio-button__play')) {
            audio.classList.toggle('play');
            audioButtonPlay.classList.toggle('fa-play');
@@ -30,6 +45,8 @@ export const musicPlayerInit = () => {
            } else{
                audioPlayer.pause();
            }
+           const track = playlist[trackIndex];
+           audioHeader.textContent = track.toUpperCase();
        }
 
        if (target.classList.contains('audio-button__prev')) {
@@ -38,14 +55,16 @@ export const musicPlayerInit = () => {
             } else{
                 trackIndex = playlist.length - 1;
             }
+            loadTrack();
        }
 
        if (target.classList.contains('audio-button__next')) {
-            if (trackIndex === playlist - 1){
+            if (trackIndex === playlist.length - 1){
                 trackIndex = 0;
             } else{
                 trackIndex++;
             }
+            loadTrack();
        }
    });
 };
